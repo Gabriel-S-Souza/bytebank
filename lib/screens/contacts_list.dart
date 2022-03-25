@@ -28,7 +28,9 @@ class ContactsList extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ContactForm()));
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => const ContactForm()
+          )).then((newContact) => print(newContact));
         },
         child: const Icon(Icons.add),
       ),

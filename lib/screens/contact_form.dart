@@ -1,3 +1,4 @@
+import 'package:bytebank/models/contact.dart';
 import 'package:flutter/material.dart';
 
 class ContactForm extends StatefulWidget {
@@ -42,9 +43,15 @@ class _ContactFormState extends State<ContactForm> {
             ),
             ElevatedButton(
               onPressed: () {
-                final String name = _nameControler.text;
-                final int? accountNumber = int.tryParse(
-                    _accountNumberControler.text.replaceAll(",", ""));
+                if (_nameControler.text.isNotEmpty && _accountNumberControler.text.isNotEmpty) {
+                  final String name = _nameControler.text;
+                  final int accountNumber = int.tryParse(_accountNumberControler
+                    .text
+                    .replaceAll(",", "")
+                    .replaceAll(".", ""))!;
+                  final Contact newContact = Contact(name, accountNumber, 0);
+                  Navigator.pop(context, newContact);
+                }
               },
               child: const Text("Create"),
             )
