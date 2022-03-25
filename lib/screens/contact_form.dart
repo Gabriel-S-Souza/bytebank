@@ -49,7 +49,7 @@ class _ContactFormState extends State<ContactForm> {
                     .text
                     .replaceAll(",", "")
                     .replaceAll(".", ""))!;
-                  final Contact newContact = Contact(name, accountNumber, 0);
+                  final Contact newContact = Contact(0, name, accountNumber);
                   Navigator.pop(context, newContact);
                 }
               },
