@@ -38,7 +38,7 @@ class ByteBankApp extends StatelessWidget {
           ),
         )
       ),
-      home: const ContactForm(),
+      home: const Dashboard(),
     );
   }
 }
