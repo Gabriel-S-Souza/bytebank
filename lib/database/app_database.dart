@@ -8,15 +8,15 @@ Future<Database> createDataBase() {
   //Como ele retorna um Future<String>, podemos utilizar o then para acessá-lo
   return getDatabasesPath().then((dataBasePath) {
     //Pegando o caminho junto com o nome de arquivo que defini
-    final String path = join(dataBasePath, "bytebank.db");
+    final String path = join(dataBasePath, "bytebank_database.db");
 
     //Abra o banco de dados em um determinado caminho
     //podendo ainda especificar a versão do db que está sendo aberta -> isto é usado para realizar determinadas ações como onCreate
     return openDatabase(path, onCreate: (db, version) {
-      //aqui dentro podemos criar nossa tabela
-      //Execute uma consulta SQL sem valor de retorno. Dentro dos parenteses vão comandos SQL compatíveis com SQLite
+  //aqui dentro podemos criar nossa tabela
+  //Execute uma consulta SQL sem valor de retorno. Dentro dos parenteses vão comandos SQL compatíveis com SQLite
       db.execute('CREATE TABLE contacts('
-          'id INTEGER PRYMARY KEY, '
+          'id INTEGER PRIMARY KEY AUTOINCREMENT, '
           'name TEXT, '
           'account_number INTEGER)');
     }, version: 1);
@@ -28,12 +28,11 @@ Future<int> save(Contact contact) {
   return createDataBase().then((db) {
     //Precisamos aqui formatar o valor a ser salvo do jeito que a função insert pede:
     final Map<String, dynamic> contactMap = {};
-
-    contactMap['id'] = contact.id;
     contactMap['name'] = contact.name;
     contactMap['account_number'] = contact.accountNumber;
 
     //Aqui, a partir de db, podemos executar ações como inserir (salvar) na tabela, passando o nome dela e o valor a ser salvo:
+    //O ID não tá sendo passado intencionalmente, pois o SQLite irá gerá-lo automaticamente
     return db.insert("contacts", contactMap);
   });
 }
@@ -45,14 +44,10 @@ Future<List<Contact>> findAll() {
       final List<Contact> contacts = [];
 
       for (Map<String, dynamic> map in maps) {
-        final Contact contact = Contact(map["name"], map["account_number"], map["id"]);
-        return contacts.add(contact);
+          final Contact contact = Contact(map["id"], map["name"], map["account_number"]);
+          contacts.add(contact);
       }
+      return contacts;
     });
   });
 }
-
-// ERRO:
-// o corpo pode ser concluído corretamente, fazendo com que null seja retornado, mas o tipo de retorno
-//  future ou list contacts é potencialmente do tipo não anulável. tente adicionar um retorno ou uma declaração 
-//  de arremesso no final
