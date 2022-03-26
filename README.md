@@ -2,8 +2,8 @@
 
 Projeto "bytebank" feito acompanhando o curso "Persistência com Flutter... " da alura.
 
-Um app de banco que implementa a persistência de dados no dispositivo do usuário com
-O pacote SQFlite.
+Um app de banco que implementa a persistência de dados no dispositivo do usuário utilizando
+o pacote SQFlite.
 
 ## Getting Started
 
