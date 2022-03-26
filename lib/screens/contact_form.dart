@@ -1,4 +1,4 @@
-import 'package:bytebank/database/app_database.dart';
+import 'package:bytebank/database/dao/contact_dao.dart';
 import 'package:bytebank/models/contact.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +12,8 @@ class ContactForm extends StatefulWidget {
 class _ContactFormState extends State<ContactForm> {
   final TextEditingController _nameControler = TextEditingController();
   final TextEditingController _accountNumberControler = TextEditingController();
+
+  final ContactDao _contactDao = ContactDao();
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +53,7 @@ class _ContactFormState extends State<ContactForm> {
                     .replaceAll(",", "")
                     .replaceAll(".", ""))!;
                   final Contact newContact = Contact(0, name, accountNumber);
-                  save(newContact).then((id) => Navigator.pop(context, newContact));
+                  _contactDao.save(newContact).then((id) => Navigator.pop(context, newContact));
                 }
               },
               child: const Text("Create"),

@@ -1,4 +1,4 @@
-import 'package:bytebank/database/app_database.dart';
+import 'package:bytebank/database/dao/contact_dao.dart';
 import 'package:bytebank/models/contact.dart';
 import 'package:bytebank/screens/contact_form.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +11,7 @@ class ContactsList extends StatefulWidget {
 }
 
 class _ContactsListState extends State<ContactsList> {
+  final ContactDao _contactDao = ContactDao();
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,7 @@ class _ContactsListState extends State<ContactsList> {
           //Este InitialData abaixo será renderizado (uma lista vazia) desde o início, antes da future ser resolvida
           // initialData: const [],
           //Nesta propriedade fica a nossa função assíncrona
-          future: findAll(),
+          future: _contactDao.findAll(),
           //Assim que tiver uma resposta da pripriedade acima, ele irá modificar o código aqui dentro deste builder abaixo:
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
@@ -62,9 +63,11 @@ class _ContactsListState extends State<ContactsList> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).colorScheme.primary,
         onPressed: () {
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const ContactForm()))
-          .then((newContact) => newContact != null ? setState(() => { } ) : null );
+          Navigator.of(context)
+              .push(
+                  MaterialPageRoute(builder: (context) => const ContactForm()))
+              .then((newContact) =>
+                  newContact != null ? setState(() => {}) : null);
         },
         child: const Icon(Icons.add),
       ),
