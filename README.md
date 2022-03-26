@@ -1,6 +1,9 @@
 # bytebank
 
-A new Flutter project.
+Projeto "bytebank" feito acompanhando o curso "Persistência com Flutter... " da alura.
+
+Um app de banco que implementa a persistência de dados no dispositivo do usuário com
+O pacote SQFlite.
 
 ## Getting Started
 
