@@ -44,19 +44,22 @@ class _ContactFormState extends State<ContactForm> {
                 keyboardType: TextInputType.number,
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                if (_nameControler.text.isNotEmpty && _accountNumberControler.text.isNotEmpty) {
-                  final String name = _nameControler.text;
-                  final int accountNumber = int.tryParse(_accountNumberControler
-                    .text
-                    .replaceAll(",", "")
-                    .replaceAll(".", ""))!;
-                  final Contact newContact = Contact(0, name, accountNumber);
-                  _contactDao.save(newContact).then((id) => Navigator.pop(context, newContact));
-                }
-              },
-              child: const Text("Create"),
+            SizedBox(
+              height: 48,
+              child: ElevatedButton(
+                onPressed: () {
+                  if (_nameControler.text.isNotEmpty && _accountNumberControler.text.isNotEmpty) {
+                    final String name = _nameControler.text;
+                    final int accountNumber = int.tryParse(_accountNumberControler
+                      .text
+                      .replaceAll(",", "")
+                      .replaceAll(".", ""))!;
+                    final Contact newContact = Contact(0, name, accountNumber);
+                    _contactDao.save(newContact).then((id) => Navigator.pop(context, newContact));
+                  }
+                },
+                child: const Text("Create"),
+              ),
             )
           ],
         ),
