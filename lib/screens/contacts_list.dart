@@ -19,7 +19,7 @@ class _ContactsListState extends State<ContactsList> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Contacts"),
+        title: const Text("Transfer"),
       ),
       body: FutureBuilder<List<Contact>>(
           //Este InitialData abaixo será renderizado (uma lista vazia) desde o início, antes da future ser resolvida
