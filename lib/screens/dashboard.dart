@@ -1,4 +1,5 @@
 import 'package:bytebank/screens/contacts_list.dart';
+import 'package:bytebank/screens/transactions_list.dart';
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatelessWidget {
@@ -19,16 +20,18 @@ class Dashboard extends StatelessWidget {
             Image.asset(
               'assets/images/bytebank_logo.png',
             ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
+            SizedBox(
+              height: 120,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
                 children: [
                   _FeatureItem(
                     text: 'Transfer',
                     icon: Icons.monetization_on,
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const ContactsList()));
+                          builder: (context) => const ContactsList()
+                      ));
                     }
                   ),
                   _FeatureItem(
@@ -36,7 +39,8 @@ class Dashboard extends StatelessWidget {
                     icon: Icons.description,
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const ContactsList()));
+                          builder: (context) => TransactionsList()
+                      ));
                     }
                   ),
                 ],
@@ -69,7 +73,6 @@ class _FeatureItem extends StatelessWidget {
           onTap: onTap,
           child: Container(
             padding: const EdgeInsets.all(8),
-            height: 100,
             width: 150,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
