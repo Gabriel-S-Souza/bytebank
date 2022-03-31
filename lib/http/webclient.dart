@@ -37,7 +37,7 @@ Future<List<Transaction>> findAll() async {
 
   //método get.. Usando a partir do client interceptado
   final Response response = await client.get(Uri.https(
-      'crudcrud.com', 'api/272c50ea79ac4f0bb28ae80497fb8266/transactions'));
+      'crudcrud.com', 'api/6a33eb89da004374a279747f65599f88/transactions'));
 
   final List<dynamic> decodedJson = jsonDecode(response.body);
 
