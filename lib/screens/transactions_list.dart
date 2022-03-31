@@ -1,3 +1,4 @@
+import 'package:bytebank/custom_widgets/custom_loading.dart';
 import 'package:flutter/material.dart';
 
 import '../http/webclient.dart';
@@ -25,18 +26,7 @@ class TransactionsList extends StatelessWidget {
             case ConnectionState.none:
               break;
             case ConnectionState.waiting:
-              return SizedBox(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: const [
-                    CircularProgressIndicator(),
-                    Text("Loading")
-                  ],
-                ),
-              );
+              return const CustomLoading();
             case ConnectionState.active:
               //Retorna partes carregadas do conteúdo -> Stream
               break;
