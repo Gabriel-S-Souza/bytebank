@@ -12,7 +12,7 @@ Client client = InterceptedClient.build(interceptors: [
 ]);
 
 const String urlAuthority = 'crudcrud.com';
-const String urlPath = 'api/bbe0815b844f48fda1b1e6f628c235d9/transactions';
+const String urlPath = 'api/d9e749d615e3461690db54d70a03c3d1/transactions';
 
 //O interceptador deve implementar a interface InterceptorContract
 class LoggingInterceptor implements InterceptorContract {
@@ -31,7 +31,7 @@ class LoggingInterceptor implements InterceptorContract {
     print('Response');
     // print('status ${data.statusCode}');
     // print('headers ${data.headers}');
-    print('body ${data.body}');
+    // print('body ${data.body}');
     return data;
   }
 }
@@ -67,7 +67,6 @@ Future<List<Transaction?>?> findAll() async {
 }
 
 Future<Transaction> save(Transaction transaction) async {
-  //TODO: atenção utilizar dados que não são String dentro do jsonEncode
   final String transactionJson = jsonEncode(
   {
     'value': transaction.value,
@@ -93,5 +92,17 @@ Future<Transaction> save(Transaction transaction) async {
         json['contact']['accountNumber']
       )
     );
+}
 
+
+//make a function for delete all transactions
+Future<void> deleteAll() async {
+  final Response responseFindAll = await client.get(Uri.https(urlAuthority, urlPath));
+  //make forEach in responseFindAll
+  final List<dynamic> decodedJson = jsonDecode(responseFindAll.body);
+  decodedJson.forEach((transactionJson) async {
+    final dynamic id = transactionJson['_id'];
+    final Response responseDeleteAll = await client.delete(Uri.https(urlAuthority, '$urlPath/$id'));
+    print('Response delete: ${responseDeleteAll.body}');
+  });
 }
