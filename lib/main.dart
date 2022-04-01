@@ -1,10 +1,8 @@
 import 'package:bytebank/screens/dashboard.dart';
 import 'package:flutter/material.dart';
 
-import 'http/webclient.dart';
 
 void main() {
-  findAll().then((transaction) => print(transaction));
   runApp(const ByteBankApp());
 }
 
