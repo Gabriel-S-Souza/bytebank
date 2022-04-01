@@ -1,8 +1,8 @@
+import 'package:bytebank/custom_widgets/centered_message.dart';
 import 'package:bytebank/custom_widgets/custom_loading.dart';
 import 'package:flutter/material.dart';
 
 import '../http/webclient.dart';
-import '../models/contact.dart';
 import '../models/transaction.dart';
 
 class TransactionsList extends StatelessWidget {
@@ -12,46 +12,48 @@ class TransactionsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    transactions
-        .add(Transaction(value: 100.0, contact: Contact(0, 'Alex', 1000)));
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Transactions'),
-      ),
-      body: FutureBuilder<List<Transaction>>(
-        future: findAll(),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-
-            case ConnectionState.none:
-              break;
-            case ConnectionState.waiting:
-              return const CustomLoading();
-            case ConnectionState.active:
-              //Retorna partes carregadas do conteúdo -> Stream
-              break;
-            case ConnectionState.done:
-              snapshot.data?.forEach((transaction) => transactions.add(transaction));
-              return ListView.builder(
-                itemBuilder: (context, index) =>
-                    _TransactionItem(transaction: transactions[index]),
-                itemCount: transactions.length,
-              );
-          }
-          return const Text("Unknown Error");
-        },
-      )
-    );
+        appBar: AppBar(
+          title: const Text('Transactions'),
+        ),
+        body: FutureBuilder<List<Transaction>>(
+          future: findAll(),
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.none:
+                break;
+              case ConnectionState.waiting:
+                return const CustomLoading();
+              case ConnectionState.active:
+                //Retorna partes carregadas do conteúdo -> Stream
+                break;
+              case ConnectionState.done:
+                snapshot.data
+                    ?.forEach((transaction) => transactions.add(transaction));
+                if (transactions.isNotEmpty) {
+                  return ListView.builder(
+                    itemBuilder: (context, index) =>
+                        _TransactionItem(transaction: transactions[index]),
+                    itemCount: transactions.length,
+                  );
+                } else {
+                  return const CustomCenteredMessage(
+                    message: "No transactions found",
+                    icon: Icons.warning,
+                  );
+                }
+            }
+            return const CustomCenteredMessage(message: "Unknown Error", icon: Icons.error);
+          },
+        ));
   }
 }
-
 
 class _TransactionItem extends StatelessWidget {
   final Transaction transaction;
 
-  const _TransactionItem({ Key? key, 
-  required this.transaction
-  }) : super(key: key);
+  const _TransactionItem({Key? key, required this.transaction})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
