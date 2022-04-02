@@ -12,7 +12,8 @@ class TransactionWebclient {
     LoggingInterceptor(),
   ]);
   static const String urlAuthority = 'crudcrud.com';
-  static const String urlPath = 'api/d9e749d615e3461690db54d70a03c3d1/transactions';
+  static const String urlPath =
+      'api/d9e749d615e3461690db54d70a03c3d1/transactions';
 
   Future<List<Transaction?>?> findAll() async {
     late final Response response;
@@ -22,64 +23,71 @@ class TransactionWebclient {
       print('Erro capturado $e');
     }
 
-    final List<Transaction> transactions = [];
-
     if (response.statusCode == 200) {
-      final List<dynamic> decodedJson = jsonDecode(response.body);
-
-      for (Map<String, dynamic> transactionJson in decodedJson) {
-        final Transaction transaction = Transaction(
-            value: transactionJson['value'] ,
-            contact: Contact(
-              0, 
-              transactionJson['contact']['name'], transactionJson['contact']['accountNumber']
-            )
-            );
-        transactions.add(transaction);
-      }
+      final List<Transaction> transactions = _toTransactionsList(response);
       return transactions;
     } else {
-      // throw Exception('Não foi possível carregar as transações');
       return null;
     }
   }
 
   Future<Transaction> save(Transaction transaction) async {
-    final String transactionJson = jsonEncode(
-    {
-      'value': transaction.value,
-      'contact': {
-        'name': transaction.contact.name,
-        'accountNumber': transaction.contact.accountNumber
-      }
-    });
+    String transactionJson = _toJsonBody(transaction);
 
     final Response response = await client.post(
       Uri.https(urlAuthority, urlPath),
       headers: {'Content-Type': 'application/json'},
       body: transactionJson,
     );
-    
-    final Map<String, dynamic> json = jsonDecode(response.body);
 
-    return Transaction(
-        value: json['value'],
-        contact: Contact(
-          0, 
-          json['contact']['name'], 
-          json['contact']['accountNumber']
-        )
-      );
+    return _toTransactionFromJson(response);
   }
 
   Future<void> deleteAll() async {
-    final Response responseFindAll = await client.get(Uri.https(urlAuthority, urlPath));
+    final Response responseFindAll =
+        await client.get(Uri.https(urlAuthority, urlPath));
     //make forEach in responseFindAll
     final List<dynamic> decodedJson = jsonDecode(responseFindAll.body);
     decodedJson.forEach((transactionJson) async {
       final dynamic id = transactionJson['_id'];
-      final Response responseDeleteAll = await client.delete(Uri.https(urlAuthority, '$urlPath/$id'));
+      final Response responseDeleteAll =
+          await client.delete(Uri.https(urlAuthority, '$urlPath/$id'));
       print('Response delete: ${responseDeleteAll.body}');
     });
+  }
+
+  List<Transaction> _toTransactionsList(Response response) {
+    final List<Transaction> transactions = [];
+    final List<dynamic> decodedJson = jsonDecode(response.body);
+
+    for (Map<String, dynamic> transactionJson in decodedJson) {
+      final Transaction transaction = Transaction(
+          value: transactionJson['value'],
+          contact: Contact(0, transactionJson['contact']['name'],
+              transactionJson['contact']['accountNumber']));
+      transactions.add(transaction);
+    }
+    return transactions;
+  }
+
+
+  Transaction _toTransactionFromJson(Response response) {
+    final Map<String, dynamic> json = jsonDecode(response.body);
+    
+    return Transaction(
+        value: json['value'],
+        contact: Contact(
+            0, json['contact']['name'], json['contact']['accountNumber']));
+  }
+
+  String _toJsonBody(Transaction transaction) {
+    final String transactionJson = jsonEncode({
+      'value': transaction.value,
+      'contact': {
+        'name': transaction.contact.name,
+        'accountNumber': transaction.contact.accountNumber
+      }
+    });
+    return transactionJson;
   }
 }
