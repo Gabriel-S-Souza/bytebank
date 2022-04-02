@@ -31,10 +31,9 @@ class TransactionsList extends StatelessWidget {
               case ConnectionState.done:
                 if (snapshot.hasData) {
                   snapshot.data?.forEach(
-                      (transaction) => transactions.add(transaction!));
+                      (transaction) => transactions.insert(0, transaction!));
                   if (transactions.isNotEmpty) {
                     return ListView.builder(
-                      reverse: true,
                       itemBuilder: (context, index) =>
                           _TransactionItem(transaction: transactions[index]),
                       itemCount: transactions.length,
