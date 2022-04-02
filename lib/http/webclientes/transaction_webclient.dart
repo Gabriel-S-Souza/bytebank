@@ -13,7 +13,7 @@ class TransactionWebclient {
   ]);
   static const String urlAuthority = 'crudcrud.com';
   static const String urlPath =
-      'api/d9e749d615e3461690db54d70a03c3d1/transactions';
+      'api/1822efaa21f941fd843a8d6e0e32cf8a/transactions';
 
   Future<List<Transaction?>?> findAll() async {
     late final Response response;
@@ -63,8 +63,9 @@ class TransactionWebclient {
     for (Map<String, dynamic> transactionJson in decodedJson) {
       final Transaction transaction = Transaction(
           value: transactionJson['value'],
+          date: DateTime.parse(transactionJson['date']),
           contact: Contact(0, transactionJson['contact']['name'],
-              transactionJson['contact']['accountNumber']));
+              transactionJson['contact']['accountNumber']), );
       transactions.add(transaction);
     }
     return transactions;
@@ -76,13 +77,16 @@ class TransactionWebclient {
     
     return Transaction(
         value: json['value'],
+        date: DateTime.parse(json['date']),
         contact: Contact(
-            0, json['contact']['name'], json['contact']['accountNumber']));
+            0, json['contact']['name'], json['contact']['accountNumber']),);
   }
 
   String _toJsonBody(Transaction transaction) {
     final String transactionJson = jsonEncode({
       'value': transaction.value,
+      //faça uma chave e valor para registrar o horário atual
+      'date': DateTime.now().toString().substring(0, 16),
       'contact': {
         'name': transaction.contact.name,
         'accountNumber': transaction.contact.accountNumber

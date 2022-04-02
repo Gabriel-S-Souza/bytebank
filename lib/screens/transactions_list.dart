@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import '../http/webclientes/transaction_webclient.dart';
 import '../models/transaction.dart';
 
-
 class TransactionsList extends StatelessWidget {
   final List<Transaction> transactions = [];
   final TransactionWebclient _webClient = TransactionWebclient();
@@ -65,14 +64,14 @@ class _TransactionItem extends StatelessWidget {
       child: ListTile(
         leading: const Icon(Icons.monetization_on),
         title: Text(
-          transaction.value.toString(),
+          transaction.value.toStringAsFixed(2),
           style: const TextStyle(
             fontSize: 24.0,
             fontWeight: FontWeight.bold,
           ),
         ),
         subtitle: Text(
-          '${transaction.contact.name} - Account: ${transaction.contact.accountNumber.toString()}',
+          '${transaction.contact.name} - ${transaction.contact.accountNumber.toString()} - ${transaction.date.toString().substring(0, 16)}',
           style: const TextStyle(
             fontSize: 16.0,
           ),
