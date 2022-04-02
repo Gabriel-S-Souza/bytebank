@@ -35,7 +35,7 @@ class Dashboard extends StatelessWidget {
                     }
                   ),
                   _FeatureItem(
-                    text: 'Transatin feed',
+                    text: 'Transaction feed',
                     icon: Icons.description,
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
