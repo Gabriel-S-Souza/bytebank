@@ -1,9 +1,10 @@
 import 'package:bytebank/custom_widgets/centered_message.dart';
 import 'package:bytebank/custom_widgets/custom_loading.dart';
 import 'package:flutter/material.dart';
-
-import '../http/webclient.dart';
+import '../http/webclientes/transaction_webclient.dart';
 import '../models/transaction.dart';
+
+final TransactionWebclient _webClient = TransactionWebclient();
 
 class TransactionsList extends StatelessWidget {
   final List<Transaction> transactions = [];
@@ -17,7 +18,7 @@ class TransactionsList extends StatelessWidget {
           title: const Text('Transactions'),
         ),
         body: FutureBuilder<List<Transaction?>?>(
-          future: findAll(),
+          future: _webClient.findAll(),
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.none:
@@ -33,6 +34,7 @@ class TransactionsList extends StatelessWidget {
                       (transaction) => transactions.add(transaction!));
                   if (transactions.isNotEmpty) {
                     return ListView.builder(
+                      reverse: true,
                       itemBuilder: (context, index) =>
                           _TransactionItem(transaction: transactions[index]),
                       itemCount: transactions.length,
