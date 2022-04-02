@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import '../http/webclientes/transaction_webclient.dart';
 import '../models/transaction.dart';
 
-final TransactionWebclient _webClient = TransactionWebclient();
 
 class TransactionsList extends StatelessWidget {
   final List<Transaction> transactions = [];
+  final TransactionWebclient _webClient = TransactionWebclient();
 
   TransactionsList({Key? key}) : super(key: key);
 

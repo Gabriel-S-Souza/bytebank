@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import '../models/contact.dart';
 import '../models/transaction.dart';
 
-final TransactionWebclient _webClient = TransactionWebclient();
 class TransactionForm extends StatefulWidget {
   final Contact contact;
+
   const TransactionForm({Key? key, required this.contact}) : super(key: key);
 
   @override
@@ -14,6 +14,7 @@ class TransactionForm extends StatefulWidget {
 
 class _TransactionFormState extends State<TransactionForm> {
   final TextEditingController _valueController = TextEditingController();
+  final TransactionWebclient _webClient = TransactionWebclient();
 
   Widget? _childButton = const Text("Transfer");
 
