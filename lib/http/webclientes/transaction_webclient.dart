@@ -13,7 +13,7 @@ class TransactionWebclient {
   ]);
   static const String urlAuthority = 'crudcrud.com';
   static const String urlPath =
-      'api/1822efaa21f941fd843a8d6e0e32cf8a/transactions';
+      'api/b926507ea9a54369a910bbbc12eab79f/transactions';
 
   Future<List<Transaction?>?> findAll() async {
     late final Response response;
@@ -32,13 +32,17 @@ class TransactionWebclient {
   }
 
   Future<Transaction> save(Transaction transaction) async {
-    String transactionJson = _toJsonBody(transaction);
+    Map<String, dynamic> transactionMap = transaction.toJson();
+    String transactionJson = jsonEncode(transactionMap);
+    print('transactionJson: $transactionJson');
 
     final Response response = await client.post(
       Uri.https(urlAuthority, urlPath),
       headers: {'Content-Type': 'application/json'},
       body: transactionJson,
     );
+
+
 
     return _toTransactionFromJson(response);
   }
@@ -61,11 +65,7 @@ class TransactionWebclient {
     final List<dynamic> decodedJson = jsonDecode(response.body);
 
     for (Map<String, dynamic> transactionJson in decodedJson) {
-      final Transaction transaction = Transaction(
-          value: transactionJson['value'],
-          date: DateTime.parse(transactionJson['date']),
-          contact: Contact(0, transactionJson['contact']['name'],
-              transactionJson['contact']['accountNumber']), );
+      final Transaction transaction = Transaction.fromJson(transactionJson);
       transactions.add(transaction);
     }
     return transactions;
@@ -75,23 +75,6 @@ class TransactionWebclient {
   Transaction _toTransactionFromJson(Response response) {
     final Map<String, dynamic> json = jsonDecode(response.body);
     
-    return Transaction(
-        value: json['value'],
-        date: DateTime.parse(json['date']),
-        contact: Contact(
-            0, json['contact']['name'], json['contact']['accountNumber']),);
-  }
-
-  String _toJsonBody(Transaction transaction) {
-    final String transactionJson = jsonEncode({
-      'value': transaction.value,
-      //faça uma chave e valor para registrar o horário atual
-      'date': DateTime.now().toString().substring(0, 16),
-      'contact': {
-        'name': transaction.contact.name,
-        'accountNumber': transaction.contact.accountNumber
-      }
-    });
-    return transactionJson;
+    return Transaction.fromJson(json);
   }
 }
