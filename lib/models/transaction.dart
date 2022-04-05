@@ -1,5 +1,3 @@
-import 'package:intl/intl.dart';
-
 import 'contact.dart';
 
 class Transaction {
@@ -17,7 +15,6 @@ class Transaction {
       : value = json['value'],
         contact = Contact.fromJson(json['contact']),
         date = DateTime.parse(json['date']);
-        // date = DateTime.parse(_convertDateTimeToDefault(json['date']));
   
   Map<String, dynamic> toJson() => {
         'value': value,
@@ -26,8 +23,7 @@ class Transaction {
       };
 
   String _getDateTime() {
-    final dateTime = DateTime.now();
-    return dateTime.toString();
+    return DateTime.now().toString();
   }
 
   @override

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:http_interceptor/http/intercepted_client.dart';
 
-import '../../models/contact.dart';
 import '../../models/transaction.dart';
 import '../interceptors/logging_interceptor.dart';
 
@@ -52,12 +51,12 @@ class TransactionWebclient {
         await client.get(Uri.https(urlAuthority, urlPath));
     //make forEach in responseFindAll
     final List<dynamic> decodedJson = jsonDecode(responseFindAll.body);
-    decodedJson.forEach((transactionJson) async {
+    for (var transactionJson in decodedJson) {
       final dynamic id = transactionJson['_id'];
       final Response responseDeleteAll =
           await client.delete(Uri.https(urlAuthority, '$urlPath/$id'));
       print('Response delete: ${responseDeleteAll.body}');
-    });
+    }
   }
 
   List<Transaction> _toTransactionsList(Response response) {
@@ -69,12 +68,5 @@ class TransactionWebclient {
       transactions.add(transaction);
     }
     return transactions;
-  }
-
-
-  Transaction _toTransactionFromJson(Response response) {
-    final Map<String, dynamic> json = jsonDecode(response.body);
-    
-    return Transaction.fromJson(json);
   }
 }
