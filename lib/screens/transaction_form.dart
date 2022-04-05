@@ -78,7 +78,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       final transactionCreated =
                           Transaction(value: value, contact: widget.contact);
                       _webClient.save(transactionCreated)
-                        .then((transaction) => Navigator.pop(context));
+                        .then((transaction) => Navigator.pop(context, transactionCreated));
                       }
                     },
                   ),

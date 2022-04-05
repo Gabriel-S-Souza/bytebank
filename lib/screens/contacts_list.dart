@@ -1,6 +1,7 @@
 import 'package:bytebank/custom_widgets/custom_loading.dart';
 import 'package:bytebank/database/dao/contact_dao.dart';
 import 'package:bytebank/models/contact.dart';
+import 'package:bytebank/models/transaction.dart';
 import 'package:bytebank/screens/contact_form.dart';
 import 'package:bytebank/screens/transaction_form.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,16 @@ class ContactsList extends StatefulWidget {
 class _ContactsListState extends State<ContactsList> {
   final ContactDao _contactDao = ContactDao();
 
+  void _activateSnackbar(double value, String name) {
+    final snackBar = SnackBar(
+      content: Text('R\$${value.toStringAsFixed(2)} transferidos para $name'),
+      behavior: SnackBarBehavior.floating,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  // Find the ScaffoldMessenger in the widget tree
+  // and use it to show a SnackBar.
   @override
   Widget build(BuildContext context) {
     List<Contact> contacts;
@@ -44,19 +55,25 @@ class _ContactsListState extends State<ContactsList> {
               case ConnectionState.done:
                 contacts = snapshot.data as List<Contact>;
                 return ListView.builder(
-                  itemBuilder: (context, index) =>
-                      _ContactItem(
-                        contact: contacts[index],
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => TransactionForm(
-                                contact: contacts[index],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                  itemBuilder: (context, index) => _ContactItem(
+                    contact: contacts[index],
+                    onTap: () {
+                      Navigator.of(context)
+                          .push(
+                        MaterialPageRoute(
+                          builder: (context) => TransactionForm(
+                            contact: contacts[index],
+                          ),
+                        ),
+                      )
+                          .then((transaction) {
+                        if (transaction != null) {
+                          _activateSnackbar(
+                              transaction.value, transaction.contact.name);
+                        }
+                      });
+                    },
+                  ),
                   itemCount: contacts.length,
                 );
             }
