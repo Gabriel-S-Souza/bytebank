@@ -1,10 +1,7 @@
-import 'package:bytebank/http/webclientes/transaction_webclient.dart';
 import 'package:bytebank/screens/dashboard.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  // final webClient = TransactionWebclient();
-  // webClient.deleteAll();
   runApp(const ByteBankApp());
 }
 

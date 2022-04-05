@@ -1,6 +1,7 @@
 import 'package:bytebank/custom_widgets/centered_message.dart';
 import 'package:bytebank/custom_widgets/custom_loading.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../http/webclientes/transaction_webclient.dart';
 import '../models/transaction.dart';
 
@@ -54,24 +55,28 @@ class TransactionsList extends StatelessWidget {
 
 class _TransactionItem extends StatelessWidget {
   final Transaction transaction;
-
   const _TransactionItem({Key? key, required this.transaction})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final String value = transaction.value.toStringAsFixed(2);
+    final String name = transaction.contact.name;
+    final String account = transaction.contact.accountNumber.toString();
+    final String date = DateFormat('dd/MM/yyyy HH:mm').format(transaction.date!);
+
     return Card(
       child: ListTile(
         leading: const Icon(Icons.monetization_on),
         title: Text(
-          transaction.value.toStringAsFixed(2),
+          value,
           style: const TextStyle(
             fontSize: 24.0,
             fontWeight: FontWeight.bold,
           ),
         ),
         subtitle: Text(
-          '${transaction.contact.name} - ${transaction.contact.accountNumber.toString()} - ${transaction.date.toString().substring(0, 16)}',
+          '$name - $account - $date',
           style: const TextStyle(
             fontSize: 16.0,
           ),
