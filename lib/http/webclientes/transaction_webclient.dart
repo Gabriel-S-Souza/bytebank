@@ -48,7 +48,6 @@ class TransactionWebclient {
   Future<void> deleteAll() async {
     final Response responseFindAll =
         await client.get(Uri.https(urlAuthority, urlPath));
-    //make forEach in responseFindAll
     final List<dynamic> decodedJson = jsonDecode(responseFindAll.body);
     for (var transactionJson in decodedJson) {
       final dynamic id = transactionJson['_id'];
