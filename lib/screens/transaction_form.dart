@@ -16,7 +16,23 @@ class _TransactionFormState extends State<TransactionForm> {
   final TextEditingController _valueController = TextEditingController();
   final TransactionWebclient _webClient = TransactionWebclient();
 
-  Widget? _childButton = const Text("Transfer");
+  void _transfer(value) {
+    setState(() => _childButton = const _ChildButtonProgressIndicator());
+    final double value = double?.tryParse(_valueController.text)!;
+
+    final transactionCreated =
+        Transaction(value: value, contact: widget.contact);
+    _webClient.save(transactionCreated)
+        .then((transaction) {
+          //make timeout to show checked icon
+          Future.delayed(const Duration(microseconds: 1200), () {
+            setState(() => _childButton = const _ChildButtonConfirm());
+          })
+              .then((value) => Navigator.pop(context, transactionCreated));
+    });
+  }
+
+  Widget? _childButton = const _ChildButtonText();
 
   @override
   Widget build(BuildContext context) {
@@ -24,70 +40,90 @@ class _TransactionFormState extends State<TransactionForm> {
       appBar: AppBar(
         title: const Text('New transaction'),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                widget.contact.name,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              widget.contact.name,
+              style: const TextStyle(
+                fontSize: 24.0,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: Text(
+                widget.contact.accountNumber.toString(),
                 style: const TextStyle(
-                  fontSize: 24.0,
+                  fontSize: 32.0,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: Text(
-                  widget.contact.accountNumber.toString(),
-                  style: const TextStyle(
-                    fontSize: 32.0,
-                    fontWeight: FontWeight.bold,
-                  ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: TextFormField(
+                controller: _valueController,
+                style: const TextStyle(fontSize: 24.0),
+                decoration: const InputDecoration(labelText: 'Value'),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                onFieldSubmitted: (String value) =>
+                    value.isNotEmpty ? _transfer(value) : null,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: SizedBox(
+                height: 48,
+                width: double.maxFinite,
+                child: ElevatedButton(
+                  child: _childButton,
+                  onPressed: () => _valueController.text.isNotEmpty
+                      ? _transfer(_valueController.text)
+                      : null,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: TextField(
-                  controller: _valueController,
-                  style: const TextStyle(fontSize: 24.0),
-                  decoration: const InputDecoration(labelText: 'Value'),
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: SizedBox(
-                  height: 48,
-                  width: double.maxFinite,
-                  child: ElevatedButton(
-                    child: _childButton,
-                    onPressed: () {
-                      if (_valueController.text.isNotEmpty) {
-                        setState(() => _childButton = const SizedBox(
-                          height: 24.0,
-                          width: 24.0,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                          ),
-                        ));
-                        final double value =
-                          double?.tryParse(_valueController.text)!;
-
-                      final transactionCreated =
-                          Transaction(value: value, contact: widget.contact);
-                      _webClient.save(transactionCreated)
-                        .then((transaction) => Navigator.pop(context, transactionCreated));
-                      }
-                    },
-                  ),
-                ),
-              )
-            ],
-          ),
+            )
+          ],
         ),
       ),
+    );
+  }
+}
+
+class _ChildButtonText extends StatelessWidget {
+  const _ChildButtonText({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Text("Transfer");
+  }
+}
+
+class _ChildButtonProgressIndicator extends StatelessWidget {
+  const _ChildButtonProgressIndicator({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox(
+      height: 24.0,
+      width: 24.0,
+      child: CircularProgressIndicator(
+        color: Colors.white,
+      ),
+    );
+  }
+}
+
+class _ChildButtonConfirm extends StatelessWidget {
+  const _ChildButtonConfirm({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Icon(
+      Icons.check,
     );
   }
 }
