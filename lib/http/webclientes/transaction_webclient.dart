@@ -12,7 +12,7 @@ class TransactionWebclient {
   ]);
   static const String urlAuthority = 'crudcrud.com';
   static const String urlPath =
-      'api/f117db14a9784ffd9d4c9309e79c1149/transactions';
+      'api/97e9817e4eea41b791229593e3f74002/transactions';
 
   Future<List<Transaction?>?> findAll() async {
     late final Response response;
