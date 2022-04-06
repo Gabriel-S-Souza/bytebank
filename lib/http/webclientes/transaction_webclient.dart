@@ -12,7 +12,7 @@ class TransactionWebclient {
   ]);
   static const String urlAuthority = 'crudcrud.com';
   static const String urlPath =
-      'api/74c00ad02a6d4f5196cff09efa77a0e7/transactions';
+      'api/f117db14a9784ffd9d4c9309e79c1149/transactions';
 
   Future<List<Transaction?>?> findAll() async {
     late final Response response;
@@ -39,11 +39,7 @@ class TransactionWebclient {
       headers: {'Content-Type': 'application/json'},
       body: transactionJson,
     );
-
-
-    print('transactionJson: $transactionJson');
-
-    // return _toTransactionFromJson(response);
+    return response;
   }
 
   Future<void> deleteAll() async {

@@ -22,13 +22,11 @@ class _TransactionFormState extends State<TransactionForm> {
 
     final transactionCreated =
         Transaction(value: value, contact: widget.contact);
-    _webClient.save(transactionCreated)
-        .then((transaction) {
-          //make timeout to show checked icon
-          Future.delayed(const Duration(microseconds: 1200), () {
-            setState(() => _childButton = const _ChildButtonConfirm());
-          })
-              .then((value) => Navigator.pop(context, transactionCreated));
+    _webClient.save(transactionCreated).then((transaction) {
+      //make timeout to show checked icon
+      Future.delayed(const Duration(microseconds: 1200), () {
+        setState(() => _childButton = const _ChildButtonConfirm());
+      }).then((value) => Navigator.pop(context, transactionCreated));
     });
   }
 
