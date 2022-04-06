@@ -67,8 +67,14 @@ class _TransactionFormState extends State<TransactionForm> {
                 decoration: const InputDecoration(labelText: 'Value'),
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
-                onFieldSubmitted: (String value) =>
-                    value.isNotEmpty ? _transfer(value) : null,
+                onFieldSubmitted: (String value) {
+                  if(value.isNotEmpty) {
+                    _transfer(value);
+                  } else {
+                    
+                  }
+
+                },
               ),
             ),
             Padding(

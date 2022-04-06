@@ -30,7 +30,7 @@ class TransactionWebclient {
     }
   }
 
-  save(Transaction transaction) async {
+  Future<Response> save(Transaction transaction) async {
     Map<String, dynamic> transactionMap = transaction.toJson();
     String transactionJson = jsonEncode(transactionMap);
 
@@ -56,13 +56,11 @@ class TransactionWebclient {
   }
 
   List<Transaction> _toTransactionsList(Response response) {
-    final List<Transaction> transactions = [];
     final List<dynamic> decodedJson = jsonDecode(response.body);
+    final List<Transaction> transactions = decodedJson
+        .map((dynamic json) => Transaction.fromJson(json))
+        .toList();
 
-    for (Map<String, dynamic> transactionJson in decodedJson) {
-      final Transaction transaction = Transaction.fromJson(transactionJson);
-      transactions.add(transaction);
-    }
     return transactions;
   }
 }
