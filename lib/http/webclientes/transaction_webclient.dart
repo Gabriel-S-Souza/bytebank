@@ -23,8 +23,11 @@ class TransactionWebclient {
     }
 
     if (response.statusCode == 200) {
-      final List<Transaction> transactions = _toTransactionsList(response);
-      return transactions;
+      final List<dynamic> decodedJson = jsonDecode(response.body);
+
+      return decodedJson
+          .map((dynamic json) => Transaction.fromJson(json))
+          .toList();
     } else {
       return null;
     }
@@ -53,14 +56,5 @@ class TransactionWebclient {
           await client.delete(Uri.https(urlAuthority, '$urlPath/$id'));
       print('Response delete: ${responseDeleteAll.body}');
     }
-  }
-
-  List<Transaction> _toTransactionsList(Response response) {
-    final List<dynamic> decodedJson = jsonDecode(response.body);
-    final List<Transaction> transactions = decodedJson
-        .map((dynamic json) => Transaction.fromJson(json))
-        .toList();
-
-    return transactions;
   }
 }

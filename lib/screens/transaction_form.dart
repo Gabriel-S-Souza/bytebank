@@ -15,22 +15,34 @@ class TransactionForm extends StatefulWidget {
 class _TransactionFormState extends State<TransactionForm> {
   final TextEditingController _valueController = TextEditingController();
   final TransactionWebclient _webClient = TransactionWebclient();
+  Widget _childButton = const _ChildButtonText();
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   void _transfer(value) {
-    setState(() => _childButton = const _ChildButtonProgressIndicator());
-    final double value = double?.tryParse(_valueController.text)!;
+    if (_formKey.currentState!.validate()) {
+      setState(() => _childButton = const _ChildButtonProgressIndicator());
+      final double value = double?.tryParse(_valueController.text.replaceAll(',', '.'))!;
 
-    final transactionCreated =
-        Transaction(value: value, contact: widget.contact);
-    _webClient.save(transactionCreated).then((transaction) {
-      //make timeout to show checked icon
-      Future.delayed(const Duration(microseconds: 1200), () {
-        setState(() => _childButton = const _ChildButtonConfirm());
-      }).then((value) => Navigator.pop(context, transactionCreated));
-    });
+      final transactionCreated =
+          Transaction(value: value, contact: widget.contact);
+      _webClient.save(transactionCreated).then((transaction) {
+        //make timeout to show checked icon
+        Future.delayed(const Duration(microseconds: 1200), () {
+          setState(() => _childButton = const _ChildButtonConfirm());
+        }).then((value) => Navigator.pop(context, transactionCreated));
+      });
+    }
   }
 
-  Widget? _childButton = const _ChildButtonText();
+  String? _validator(String? value) {
+    if (double.tryParse(value!.replaceAll(',', '.')) == null) {
+        return 'Insira um valor válido';
+    } else if (double.tryParse(value.replaceAll(',', '.'))! < 0.10) {
+      return 'Valor baixo demais';
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,22 +71,23 @@ class _TransactionFormState extends State<TransactionForm> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: TextFormField(
-                controller: _valueController,
-                style: const TextStyle(fontSize: 24.0),
-                decoration: const InputDecoration(labelText: 'Value'),
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                onFieldSubmitted: (String value) {
-                  if(value.isNotEmpty) {
-                    _transfer(value);
-                  } else {
-                    
-                  }
-
-                },
+            Form(
+              key: _formKey,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: TextFormField(
+                  controller: _valueController,
+                  style: const TextStyle(fontSize: 24.0),
+                  decoration: const InputDecoration(labelText: 'Value'),
+                  validator: _validator,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  onFieldSubmitted: (String value) {
+                    if (value.isNotEmpty) {
+                      _transfer(value);
+                    } else {}
+                  },
+                ),
               ),
             ),
             Padding(
