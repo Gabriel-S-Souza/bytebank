@@ -19,7 +19,7 @@ class _ContactFormState extends State<ContactForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("New contact"),
+        title: const Text('New contact'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -29,7 +29,7 @@ class _ContactFormState extends State<ContactForm> {
             TextField(
               controller: _nameControler,
               decoration: const InputDecoration(
-                labelText: "Full name",
+                labelText: 'Full name',
               ),
               style: Theme.of(context).textTheme.labelMedium,
             ),
@@ -38,7 +38,7 @@ class _ContactFormState extends State<ContactForm> {
               child: TextField(
                 controller: _accountNumberControler,
                 decoration: const InputDecoration(
-                  labelText: "Account number",
+                  labelText: 'Account number',
                 ),
                 style: Theme.of(context).textTheme.labelMedium,
                 keyboardType: TextInputType.number,
@@ -52,13 +52,13 @@ class _ContactFormState extends State<ContactForm> {
                     final String name = _nameControler.text;
                     final int accountNumber = int.tryParse(_accountNumberControler
                       .text
-                      .replaceAll(",", "")
-                      .replaceAll(".", ""))!;
-                    final Contact newContact = Contact(0, name, accountNumber);
+                      .replaceAll(',', '')
+                      .replaceAll('.', ''))!;
+                    final Contact newContact = Contact('0', name, accountNumber);
                     _contactDao.save(newContact).then((id) => Navigator.pop(context, newContact));
                   }
                 },
-                child: const Text("Create"),
+                child: const Text('Create'),
               ),
             )
           ],

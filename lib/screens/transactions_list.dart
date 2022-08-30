@@ -26,7 +26,6 @@ class TransactionsList extends StatelessWidget {
               case ConnectionState.waiting:
                 return const CustomLoading();
               case ConnectionState.active:
-                //Retorna partes carregadas do conteúdo -> Stream
                 break;
               case ConnectionState.done:
                 if (snapshot.hasData) {
@@ -40,16 +39,18 @@ class TransactionsList extends StatelessWidget {
                     );
                   }
                 }
-                return const CustomCenteredMessage(
-                  message: "No transactions found",
-                  icon: Icons.warning,
-                );
-            }
-
-            return const CustomCenteredMessage(
-                message: "Unknown Error", icon: Icons.error);
+                else {
+                  return const CustomCenteredMessage(
+                    message: 'No transactions found',
+                    icon: Icons.warning,
+                  );
+                }
+              }
+             return const CustomCenteredMessage(
+                message: 'Unknown Error', icon: Icons.error);
           },
-        ));
+      )
+    );
   }
 }
 
@@ -67,7 +68,14 @@ class _TransactionItem extends StatelessWidget {
 
     return Card(
       child: ListTile(
-        leading: const Icon(Icons.monetization_on),
+        leading: CircleAvatar(
+          child: Icon(
+            Icons.monetization_on,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          backgroundColor: Colors.transparent,
+        ),
+        contentPadding: const EdgeInsets.all(8),
         title: Text(
           value,
           style: const TextStyle(
@@ -75,11 +83,22 @@ class _TransactionItem extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        subtitle: Text(
-          '$name - $account - $date',
-          style: const TextStyle(
-            fontSize: 16.0,
-          ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '$name | $account',
+              style: const TextStyle(
+                fontSize: 16.0,
+              ),
+            ),
+            Text(
+              date,
+              style: const TextStyle(
+                fontSize: 14.0,
+              ),
+            ),
+          ],
         ),
       ),
     );

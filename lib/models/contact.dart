@@ -1,5 +1,5 @@
 class Contact {
-  final int? id;
+  final String? id;
   final String name;
   final int accountNumber;
 

@@ -10,22 +10,29 @@ class TransactionWebclient {
   Client client = InterceptedClient.build(interceptors: [
     LoggingInterceptor(),
   ]);
-  static const String urlAuthority = 'crudcrud.com';
+  static const String urlAuthority = 'crudapi.co.uk';
   static const String urlPath =
-      'api/97e9817e4eea41b791229593e3f74002/transactions';
-
+      '/api/v1/transactions';
+  static const String apiToken = 'faWvWpDPuk0CI0GPPwTY3w438fIfvZSl_H0LWm6sIyteZwsATA';
+  
   Future<List<Transaction?>?> findAll() async {
     late final Response response;
     try {
-      response = await client.get(Uri.https(urlAuthority, urlPath));
+      response = await client.get(
+        Uri.https(urlAuthority, urlPath),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $apiToken',
+        },
+      );
     } catch (e) {
       print('Erro capturado $e');
     }
 
     if (response.statusCode == 200) {
-      final List<dynamic> decodedJson = jsonDecode(response.body);
+      final decodedJson = jsonDecode(response.body);
 
-      return decodedJson
+      return (decodedJson['items'] as List)
           .map((dynamic json) => Transaction.fromJson(json))
           .toList();
     } else {
@@ -51,9 +58,7 @@ class TransactionWebclient {
     final List<dynamic> decodedJson = jsonDecode(responseFindAll.body);
     for (var transactionJson in decodedJson) {
       final dynamic id = transactionJson['_id'];
-      final Response responseDeleteAll =
-          await client.delete(Uri.https(urlAuthority, '$urlPath/$id'));
-      print('Response delete: ${responseDeleteAll.body}');
+      await client.delete(Uri.https(urlAuthority, '$urlPath/$id'));
     }
   }
 }
