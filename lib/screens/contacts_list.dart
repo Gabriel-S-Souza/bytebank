@@ -1,7 +1,6 @@
 import 'package:bytebank/custom_widgets/custom_loading.dart';
 import 'package:bytebank/database/dao/contact_dao.dart';
 import 'package:bytebank/models/contact.dart';
-import 'package:bytebank/models/transaction.dart';
 import 'package:bytebank/screens/contact_form.dart';
 import 'package:bytebank/screens/transaction_form.dart';
 import 'package:flutter/material.dart';
@@ -32,14 +31,10 @@ class _ContactsListState extends State<ContactsList> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Transfer"),
+        title: const Text('Transfer'),
       ),
       body: FutureBuilder<List<Contact>>(
-          //Este InitialData abaixo será renderizado (uma lista vazia) desde o início, antes da future ser resolvida
-          // initialData: const [],
-          //Nesta propriedade fica a nossa função assíncrona
           future: _contactDao.findAll(),
-          //Assim que tiver uma resposta da pripriedade acima, ele irá modificar o código aqui dentro deste builder abaixo:
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.none:
@@ -49,7 +44,6 @@ class _ContactsListState extends State<ContactsList> {
                 return const CustomLoading();
 
               case ConnectionState.active:
-                //Retorna partes carregadas do conteúdo -> Stream
                 break;
 
               case ConnectionState.done:
@@ -77,7 +71,7 @@ class _ContactsListState extends State<ContactsList> {
                   itemCount: contacts.length,
                 );
             }
-            return const Text("Unknown Error");
+            return const Text('Unknown Error');
           }),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).colorScheme.primary,

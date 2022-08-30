@@ -21,11 +21,11 @@ class Transaction {
   Map<String, dynamic> toJson() => {
         'value': value,
         'contact': contact.toJson(),
-        'date': _getDateTime(),
+        'date': Formatters.dateFormattedFromDateTime(_getDateTime()),
       };
 
-  String _getDateTime() {
-    return DateTime.now().toString();
+  DateTime _getDateTime() {
+    return DateTime.now();
   }
 
   @override

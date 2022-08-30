@@ -8,11 +8,11 @@ class ContactDao {
       '$_name TEXT, '
       '$_accountNumber INTEGER)';
 
-  static const String _id = "id";
-  static const String _name = "name";
-  static const String _accountNumber = "account_number";
+  static const String _id = 'id';
+  static const String _name = 'name';
+  static const String _accountNumber = 'account_number';
 
-  static const String tableName = "contacts";
+  static const String tableName = 'contacts';
 
   Future<int> save(Contact contact) async {
     final Database db = await getDataBase();
@@ -22,7 +22,6 @@ class ContactDao {
     return db.insert(tableName, contactMap);
   }
 
-//Definindo uma função para buscar todos os contatos
   Future<List<Contact>> findAll() async {
     final Database db = await getDataBase();
 
@@ -44,7 +43,7 @@ class ContactDao {
     final List<Contact> contacts = [];
 
     for (Map<String, dynamic> row in dbMapsList) {
-      contacts.add(Contact(row[_id], row[_name], row[_accountNumber]));
+      contacts.add(Contact(row[_id].toString(), row[_name], row[_accountNumber]));
     }
     return contacts;
   }

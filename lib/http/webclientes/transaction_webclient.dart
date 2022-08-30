@@ -10,10 +10,12 @@ class TransactionWebclient {
   Client client = InterceptedClient.build(interceptors: [
     LoggingInterceptor(),
   ]);
-  static const String urlAuthority = 'crudapi.co.uk';
-  static const String urlPath =
+  final String urlAuthority = 'crudapi.co.uk';
+  final String urlPath =
       '/api/v1/transactions';
-  static const String apiToken = 'faWvWpDPuk0CI0GPPwTY3w438fIfvZSl_H0LWm6sIyteZwsATA';
+  final String apiToken = 'faWvWpDPuk0CI0GPPwTY3w438fIfvZSl_H0LWm6sIyteZwsATA';
+  String? error;
+
   
   Future<List<Transaction?>?> findAll() async {
     late final Response response;
@@ -32,24 +34,34 @@ class TransactionWebclient {
     if (response.statusCode == 200) {
       final decodedJson = jsonDecode(response.body);
 
-      return (decodedJson['items'] as List)
+      final transactions = (decodedJson['items'] as List)
           .map((dynamic json) => Transaction.fromJson(json))
           .toList();
+      transactions.sort((a, b) => a.date!.compareTo(b.date!));
+      return transactions;
     } else {
       return null;
     }
   }
 
-  Future<Response> save(Transaction transaction) async {
+  Future<Response?> save(Transaction transaction) async {
     Map<String, dynamic> transactionMap = transaction.toJson();
-    String transactionJson = jsonEncode(transactionMap);
+    String transactionJson = jsonEncode([transactionMap]);
 
-    final Response response = await client.post(
+    try {
+      final Response response = await client.post(
       Uri.https(urlAuthority, urlPath),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $apiToken',
+      },
       body: transactionJson,
     );
     return response;
+    } catch (e) {
+      error = e.toString();
+      return null;
+    }
   }
 
   Future<void> deleteAll() async {
@@ -57,7 +69,7 @@ class TransactionWebclient {
         await client.get(Uri.https(urlAuthority, urlPath));
     final List<dynamic> decodedJson = jsonDecode(responseFindAll.body);
     for (var transactionJson in decodedJson) {
-      final dynamic id = transactionJson['_id'];
+      final String? id = transactionJson['_id'];
       await client.delete(Uri.https(urlAuthority, '$urlPath/$id'));
     }
   }

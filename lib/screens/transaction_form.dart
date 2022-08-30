@@ -1,4 +1,5 @@
 import 'package:bytebank/http/webclientes/transaction_webclient.dart';
+import 'package:bytebank/utils.dart/snackbar_app.dart';
 import 'package:flutter/material.dart';
 import '../models/contact.dart';
 import '../models/transaction.dart';
@@ -14,24 +15,38 @@ class TransactionForm extends StatefulWidget {
 
 class _TransactionFormState extends State<TransactionForm> {
   final TextEditingController _valueController = TextEditingController();
-  final TransactionWebclient _webClient = TransactionWebclient();
+  final TransactionWebclient webClient = TransactionWebclient();
   Widget _childButton = const _ChildButtonText();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  void _transfer(value) {
+  void _transfer(String value) {
     if (_formKey.currentState!.validate()) {
       setState(() => _childButton = const _ChildButtonProgressIndicator());
       final double value = double?.tryParse(_valueController.text.replaceAll(',', '.'))!;
 
-      final transactionCreated =
-          Transaction(value: value, contact: widget.contact);
-      _webClient.save(transactionCreated).then((transaction) {
-        Future.delayed(const Duration(milliseconds: 1200), () {
-          setState(() => _childButton = const _ChildButtonConfirm());
-        }).then((value) => Navigator.pop(context, transactionCreated));
-      });
+      final transactionCreated = Transaction(value: value, contact: widget.contact);
+      webClient.save(transactionCreated)
+          .then((transaction) {
+            if (transaction?.body != null && transaction!.body.contains('error')) {
+              showSnackBar(webClient.error ?? 'Erro ao tranferir', true);
+            }
+            Future.delayed(const Duration(milliseconds: 1200), () {
+              setState(() => _childButton = const _ChildButtonConfirm());
+            }).then((value) => Navigator.pop(context, transactionCreated));
+          })
+          .catchError((err) {
+            showSnackBar(err, true);
+          });
     }
+  }
+
+  void showSnackBar(String message, bool isError) {
+    SnackBarApp.showSnackBar(
+      context: context, 
+      message: message,
+      isError: isError
+    );
   }
 
   String? _validator(String? value) {
@@ -47,7 +62,7 @@ class _TransactionFormState extends State<TransactionForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New transaction'),
+        title: const Text('Nova transferência'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -114,7 +129,7 @@ class _ChildButtonText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text("Transfer");
+    return const Text('Transfer');
   }
 }
 
@@ -140,6 +155,11 @@ class _ChildButtonConfirm extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Icon(
       Icons.check,
+      shadows: [
+        BoxShadow(
+          spreadRadius: 4
+        )
+      ],
     );
   }
 }

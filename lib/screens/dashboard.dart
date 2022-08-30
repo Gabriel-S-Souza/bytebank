@@ -9,7 +9,7 @@ class Dashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Bytebank"),
+        title: const Text('Bytebank'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -26,7 +26,7 @@ class Dashboard extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 children: [
                   _FeatureItem(
-                    text: 'Transfer',
+                    text: 'Transferências',
                     icon: Icons.monetization_on,
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
@@ -35,7 +35,7 @@ class Dashboard extends StatelessWidget {
                     }
                   ),
                   _FeatureItem(
-                    text: 'Transaction feed',
+                    text: 'Histórico',
                     icon: Icons.description,
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(

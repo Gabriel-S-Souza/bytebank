@@ -1,7 +1,7 @@
 import 'package:bytebank/custom_widgets/centered_message.dart';
 import 'package:bytebank/custom_widgets/custom_loading.dart';
+import 'package:bytebank/utils.dart/formatters.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../http/webclientes/transaction_webclient.dart';
 import '../models/transaction.dart';
 
@@ -15,7 +15,7 @@ class TransactionsList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Transactions'),
+          title: const Text('Tranferências'),
         ),
         body: FutureBuilder<List<Transaction?>?>(
           future: _webClient.findAll(),
@@ -61,10 +61,10 @@ class _TransactionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String value = transaction.value.toStringAsFixed(2);
+    final String value = Formatters.moneyDisplay(transaction.value);
     final String name = transaction.contact.name;
     final String account = transaction.contact.accountNumber.toString();
-    final String date = DateFormat('dd/MM/yyyy HH:mm').format(transaction.date!);
+    final String date = Formatters.dateFormattedFromDateTime(transaction.date!);
 
     return Card(
       child: ListTile(
@@ -79,7 +79,7 @@ class _TransactionItem extends StatelessWidget {
         title: Text(
           value,
           style: const TextStyle(
-            fontSize: 24.0,
+            fontSize: 20.0,
             fontWeight: FontWeight.bold,
           ),
         ),
