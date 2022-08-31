@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:http/http.dart';
 import 'package:http_interceptor/http/intercepted_client.dart';
@@ -28,7 +29,7 @@ class TransactionWebclient {
         },
       );
     } catch (e) {
-      print('Erro capturado $e');
+      log('Erro capturado $e');
     }
 
     if (response.statusCode == 200) {

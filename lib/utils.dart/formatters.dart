@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 
 class Formatters {
   static String moneyDisplay(double value) {
-    value *= 100;
     final moneyMask = CurrencyTextInputFormatter(
       locale: 'pt-BR',
       name: 'R\$ '
@@ -13,7 +12,7 @@ class Formatters {
     String moneyFormated = moneyMask
         .formatEditUpdate(
           const TextEditingValue(text: ''),
-          TextEditingValue(text: value.toString()),
+          TextEditingValue(text: value.toStringAsFixed(2)),
         )
         .text;
 

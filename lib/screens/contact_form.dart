@@ -10,8 +10,8 @@ class ContactForm extends StatefulWidget {
 }
 
 class _ContactFormState extends State<ContactForm> {
-  final TextEditingController _nameControler = TextEditingController();
-  final TextEditingController _accountNumberControler = TextEditingController();
+  final TextEditingController nameControler = TextEditingController();
+  final TextEditingController accountNumberControler = TextEditingController();
 
   final ContactDao _contactDao = ContactDao();
 
@@ -27,7 +27,7 @@ class _ContactFormState extends State<ContactForm> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextField(
-              controller: _nameControler,
+              controller: nameControler,
               decoration: const InputDecoration(
                 labelText: 'Full name',
               ),
@@ -36,7 +36,7 @@ class _ContactFormState extends State<ContactForm> {
             Padding(
               padding: const EdgeInsets.only(top: 8.0, bottom: 24),
               child: TextField(
-                controller: _accountNumberControler,
+                controller: accountNumberControler,
                 decoration: const InputDecoration(
                   labelText: 'Account number',
                 ),
@@ -48,9 +48,9 @@ class _ContactFormState extends State<ContactForm> {
               height: 48,
               child: ElevatedButton(
                 onPressed: () {
-                  if (_nameControler.text.isNotEmpty && _accountNumberControler.text.isNotEmpty) {
-                    final String name = _nameControler.text;
-                    final int accountNumber = int.tryParse(_accountNumberControler
+                  if (nameControler.text.isNotEmpty && accountNumberControler.text.isNotEmpty) {
+                    final String name = nameControler.text;
+                    final int accountNumber = int.tryParse(accountNumberControler
                       .text
                       .replaceAll(',', '')
                       .replaceAll('.', ''))!;

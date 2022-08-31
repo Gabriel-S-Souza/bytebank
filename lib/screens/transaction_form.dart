@@ -1,5 +1,6 @@
 import 'package:bytebank/http/webclientes/transaction_webclient.dart';
 import 'package:bytebank/utils.dart/snackbar_app.dart';
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/material.dart';
 import '../models/contact.dart';
 import '../models/transaction.dart';
@@ -14,16 +15,19 @@ class TransactionForm extends StatefulWidget {
 }
 
 class _TransactionFormState extends State<TransactionForm> {
-  final TextEditingController _valueController = TextEditingController();
+  final TextEditingController valueController = TextEditingController();
+  final CurrencyTextInputFormatter currencyFormatter = CurrencyTextInputFormatter(
+    locale: 'pt-BR',
+    name: 'R\$ '
+  );
   final TransactionWebclient webClient = TransactionWebclient();
-  Widget _childButton = const _ChildButtonText();
+  Widget childButton = const ChildButtonText();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  void _transfer(String value) {
+  void _transfer(double value) {
     if (_formKey.currentState!.validate()) {
-      setState(() => _childButton = const _ChildButtonProgressIndicator());
-      final double value = double?.tryParse(_valueController.text.replaceAll(',', '.'))!;
+      setState(() => childButton = const ChildButtonProgressIndicator());
 
       final transactionCreated = Transaction(value: value, contact: widget.contact);
       webClient.save(transactionCreated)
@@ -32,7 +36,7 @@ class _TransactionFormState extends State<TransactionForm> {
               showSnackBar(webClient.error ?? 'Erro ao tranferir', true);
             }
             Future.delayed(const Duration(milliseconds: 1200), () {
-              setState(() => _childButton = const _ChildButtonConfirm());
+              setState(() => childButton = const ChildButtonConfirm());
             }).then((value) => Navigator.pop(context, transactionCreated));
           })
           .catchError((err) {
@@ -49,10 +53,10 @@ class _TransactionFormState extends State<TransactionForm> {
     );
   }
 
-  String? _validator(String? value) {
-    if (double.tryParse(value!.replaceAll(',', '.')) == null) {
+  String? validator(double? value) {
+    if (value == null) {
         return 'Insira um valor válido';
-    } else if (double.tryParse(value.replaceAll(',', '.'))! < 0.10) {
+    } else if (value < 1) {
       return 'Valor baixo demais';
     }
     return null;
@@ -90,15 +94,16 @@ class _TransactionFormState extends State<TransactionForm> {
               child: Padding(
                 padding: const EdgeInsets.only(top: 16.0),
                 child: TextFormField(
-                  controller: _valueController,
+                  controller: valueController,
+                  inputFormatters: [currencyFormatter],
                   style: const TextStyle(fontSize: 24.0),
                   decoration: const InputDecoration(labelText: 'Value'),
-                  validator: _validator,
+                  validator: (value) => validator(currencyFormatter.getUnformattedValue().toDouble()),
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
                   onFieldSubmitted: (String value) {
                     if (value.isNotEmpty) {
-                      _transfer(value);
+                      _transfer(currencyFormatter.getUnformattedValue().toDouble());
                     } else {}
                   },
                 ),
@@ -110,9 +115,9 @@ class _TransactionFormState extends State<TransactionForm> {
                 height: 48,
                 width: double.maxFinite,
                 child: ElevatedButton(
-                  child: _childButton,
-                  onPressed: () => _valueController.text.isNotEmpty
-                      ? _transfer(_valueController.text)
+                  child: childButton,
+                  onPressed: () => valueController.text.isNotEmpty
+                      ? _transfer(currencyFormatter.getUnformattedValue().toDouble())
                       : null,
                 ),
               ),
@@ -124,8 +129,8 @@ class _TransactionFormState extends State<TransactionForm> {
   }
 }
 
-class _ChildButtonText extends StatelessWidget {
-  const _ChildButtonText({Key? key}) : super(key: key);
+class ChildButtonText extends StatelessWidget {
+  const ChildButtonText({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -133,8 +138,8 @@ class _ChildButtonText extends StatelessWidget {
   }
 }
 
-class _ChildButtonProgressIndicator extends StatelessWidget {
-  const _ChildButtonProgressIndicator({Key? key}) : super(key: key);
+class ChildButtonProgressIndicator extends StatelessWidget {
+  const ChildButtonProgressIndicator({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -148,8 +153,8 @@ class _ChildButtonProgressIndicator extends StatelessWidget {
   }
 }
 
-class _ChildButtonConfirm extends StatelessWidget {
-  const _ChildButtonConfirm({Key? key}) : super(key: key);
+class ChildButtonConfirm extends StatelessWidget {
+  const ChildButtonConfirm({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
