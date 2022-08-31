@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:http/http.dart';
 import 'package:http_interceptor/http/intercepted_client.dart';
 
@@ -58,10 +57,19 @@ class TransactionWebclient {
       },
       body: transactionJson,
     );
+    
+    if (response.body.contains('{"error":"Bad request"}') ||
+      response.statusCode < 200 || response.statusCode >= 300) {
+      error = 'Houve um erro na comunicação com o servidor';
+      
+      print(response.statusCode);
+      throw Exception('Houve um erro na comunicação com o servidor');
+    } 
+    print(response.body);
     return response;
     } catch (e) {
       error = e.toString();
-      return null;
+      rethrow;
     }
   }
 

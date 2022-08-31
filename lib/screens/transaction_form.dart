@@ -25,25 +25,35 @@ class _TransactionFormState extends State<TransactionForm> {
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  void _transfer(double value) {
+  void _transfer(double value) async {
     if (_formKey.currentState!.validate()) {
       setState(() => childButton = const ChildButtonProgressIndicator());
 
       final transactionCreated = Transaction(value: value, contact: widget.contact);
-      webClient.save(transactionCreated)
-          .then((transaction) {
-            if (transaction?.body != null && transaction!.body.contains('error')) {
-              showSnackBar(webClient.error ?? 'Erro ao tranferir', true);
-            }
-            Future.delayed(const Duration(milliseconds: 1200), () {
-              setState(() => childButton = const ChildButtonConfirm());
-            }).then((value) => Navigator.pop(context, transactionCreated));
-          })
-          .catchError((err) {
-            showSnackBar(err, true);
-          });
+      try {
+        await webClient.save(transactionCreated)
+            .then((value) async {
+              if(value == null){
+                showError();
+              } else {
+                await Future.delayed(const Duration(milliseconds: 500), () {
+                  setState(() => childButton = const ChildButtonConfirm());
+                });
+                backOnSuccess(transactionCreated);
+              }
+            });
+      } catch (e) {
+        showError();
+      }
     }
   }
+
+  void showError() {
+    showSnackBar(webClient.error!, true);
+    setState(() => childButton = const ChildButtonText());
+  } 
+
+  void backOnSuccess(Transaction transaction) => Navigator.pop(context);
 
   void showSnackBar(String message, bool isError) {
     SnackBarApp.showSnackBar(
@@ -160,11 +170,7 @@ class ChildButtonConfirm extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Icon(
       Icons.check,
-      shadows: [
-        BoxShadow(
-          spreadRadius: 4
-        )
-      ],
+      size: 30.0,
     );
   }
 }
